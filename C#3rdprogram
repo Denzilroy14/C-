@@ -1,0 +1,62 @@
+using System;
+public class BaseClass
+{
+// Access Modifiers
+public int publicVar = 10;
+protected int protectedVar = 20;
+private int privateVar = 30;
+internal int internalVar = 40;
+protected internal int protectedInternalVar = 50;
+public void ShowBaseAccess()
+{
+Console.WriteLine("Inside BaseClass:");
+Console.WriteLine("Public: " + publicVar);
+Console.WriteLine("Protected: " + protectedVar);
+Console.WriteLine("Private: " + privateVar);
+Console.WriteLine("Internal: " + internalVar);
+Console.WriteLine("Protected Internal: " + protectedInternalVar);
+Console.WriteLine();
+}
+}
+public class DerivedClass : BaseClass // Inheritance
+{
+public void ShowDerivedAccess()
+{
+Console.WriteLine("Inside DerivedClass (child class):");
+Console.WriteLine("Public: " + publicVar);
+Console.WriteLine("Protected: " + protectedVar);
+// Console.WriteLine("Private: " + privateVar); // Not allowed
+Console.WriteLine("Internal: " + internalVar);
+Console.WriteLine("Protected Internal: " + protectedInternalVar);
+Console.WriteLine();
+}
+}
+public class OtherClass // Same assembly, no inheritance
+{
+public void ShowOtherClassAccess()
+{
+BaseClass obj = new BaseClass();
+Console.WriteLine("Inside OtherClass (same assembly, non-child
+class):");
+Console.WriteLine("Public: " + obj.publicVar);
+// Console.WriteLine("Protected: " + obj.protectedVar); // Not
+allowed
+// Console.WriteLine("Private: " + obj.privateVar); // Not allowed
+Console.WriteLine("Internal: " + obj.internalVar);
+Console.WriteLine("Protected Internal: " +
+obj.protectedInternalVar);
+Console.WriteLine();
+}
+}
+class Program
+{
+static void Main()
+{
+BaseClass b = new BaseClass();
+b.ShowBaseAccess();
+DerivedClass d = new DerivedClass();
+d.ShowDerivedAccess();
+OtherClass o = new OtherClass();
+o.ShowOtherClassAccess();
+}
+}
