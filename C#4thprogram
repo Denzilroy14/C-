@@ -1,0 +1,138 @@
+using System;
+using System.Globalization; // Needed for CultureInfo
+class PurchasedItem
+{
+public int ItemCode;
+public string ItemName;
+public int Quantity;
+public decimal UnitPrice;
+public decimal LineTotal;
+}
+class Program
+{
+static void Main()
+{
+    string[] catalogNames = { "Pen", "Notebook", "Eraser",
+"Pencil", "Ruler", "Markers", "Stapler", "Highlighter" };
+decimal[] catalogPrices = { 5.50m, 4.00m, 2.00m, 3.00m,10.00m, 60.00m,12.00m,25.00m };
+Console.WriteLine("\n\n=== SHOPPING BILL SYSTEM ===");
+// Bill number
+Console.Write("Enter Bill Number: ");
+string billNo = Console.ReadLine();
+if (billNo == "")
+{
+billNo = "0000";
+}
+Console.Write("Enter Clerk Name: ");
+string clerk = Console.ReadLine();
+if (clerk == "")
+{
+clerk = "Unknown";
+}
+// Print catalog
+Console.WriteLine("\nAvailable Items:");
+for (int i = 0; i < catalogNames.Length; i++)
+{
+Console.WriteLine($"{i+1} :{catalogNames[i]} -{catalogPrices[i]:C}");
+}
+// Purchased items
+PurchasedItem[] purchased = new PurchasedItem[50];
+int count = 0;
+decimal subTotal = 0;
+Console.WriteLine("\nEnter items one-by-one. Type 0 tofinish.");
+while (true)
+{
+Console.Write("\nEnter item code (0 to finish): ");
+string input = Console.ReadLine();
+int itemCode;
+if (!int.TryParse(input, out itemCode))
+{
+Console.WriteLine("Invalid input. Enter a number.");
+continue;
+}
+if (itemCode == 0){
+break;}
+if (itemCode < 0 || itemCode >= catalogNames.Length) //Fixed index check
+{
+Console.WriteLine("Item code out of range. Tryagain.");
+continue;
+}
+Console.Write("Enter quantity: ");
+int qty;
+if (!int.TryParse(Console.ReadLine(), out qty) || qty <=
+0)
+{
+Console.WriteLine("Quantity must be a positive number. Try again.");
+continue;
+}
+PurchasedItem item = new PurchasedItem();
+item.ItemCode = itemCode;
+item.ItemName = catalogNames[itemCode];
+item.Quantity = qty;
+item.UnitPrice = catalogPrices[itemCode];
+item.LineTotal = item.UnitPrice * qty;
+purchased[count] = item;
+count++;
+subTotal += item.LineTotal;
+Console.WriteLine($"Added: {item.ItemName} x {qty} ={item.LineTotal:C}");
+}
+if (count == 0)
+{
+Console.WriteLine("\nNo items added. Exiting program.");
+return;
+}
+// Discount
+decimal discount = 0;
+if (subTotal >= 500)
+discount = subTotal * 0.10m;
+else if (subTotal >= 200)
+discount = subTotal * 0.05m;
+decimal afterDiscount = subTotal - discount;
+decimal tax = afterDiscount * 0.12m; // 12% tax
+decimal grandTotal = afterDiscount + tax;
+// Payment mode
+Console.WriteLine("\nSelect Payment Mode: 1-Cash 2-Card 3-UPI");
+Console.Write("Enter choice: ");
+string paymentChoice = Console.ReadLine();
+string paymentMode;
+if (paymentChoice == "1")
+paymentMode = "Cash";
+else if (paymentChoice == "2")
+paymentMode = "Card";
+else if (paymentChoice == "3")
+paymentMode = "UPI";
+else
+paymentMode = "Unknown";
+// Print Bill
+Console.WriteLine("\n==================== BILL====================");
+Console.WriteLine($"Bill No. : {billNo}");
+Console.WriteLine($"Clerk : {clerk}");
+Console.WriteLine($"Date/Time : {DateTime.Now.ToString("g",CultureInfo.InvariantCulture)}");
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine($"{"Code",4} {"Item",-15} {"Qty",3}{"Unit",8} {"Line Total",12}");
+Console.WriteLine("----------------------------------------------");
+for (int i = 0; i < count; i++)
+{
+var it = purchased[i];
+Console.WriteLine($"{it.ItemCode,4} {it.ItemName,-15}{it.Quantity,3} {it.UnitPrice,8:C} {it.LineTotal,12:C}");
+}
+Console.WriteLine("----------------------------------------------");
+Console.WriteLine($"{"Subtotal",30} : {subTotal,10:C}");
+Console.WriteLine($"{"Discount",30} : {discount,10:C}");Console.WriteLine($"{"After Discount",30} :{afterDiscount,10:C}");
+Console.WriteLine($"{"Tax (12%)",30} : {tax,10:C}");
+Console.WriteLine($"{"Grand Total",30} : {grandTotal,10:C}");
+Console.WriteLine($"{"Payment Mode",30} : {paymentMode}");
+Console.WriteLine("==============================================");
+string remark = "";
+if (paymentMode == "Cash")
+remark = "Thank you! Keep the change.";
+else if (paymentMode == "Card")
+remark = "Card payment processed.";
+else if (paymentMode == "UPI")
+remark = "UPI payment received.";
+else
+remark = "Payment pending.";
+Console.WriteLine($"\nRemark: {remark}");
+Console.WriteLine("\nPress any key to exit...");
+Console.ReadKey();}
+}
